@@ -14,7 +14,7 @@ import java.util.Random;
  */
 public class Client {
     private static int n_clients=0;                              //total clients
-    private static EchoClient echo = new EchoClient();             //echo client
+    private EchoClient echo;                                       //echo client
     
     
     private int id=0;                                  //client id is sequential
@@ -25,6 +25,7 @@ public class Client {
         n_clients++;
         id = n_clients;
         request_number = 0;
+        echo = new EchoClient(); 
     }
     
     public void computePI(){

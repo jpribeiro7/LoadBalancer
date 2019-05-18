@@ -33,13 +33,14 @@ public class EchoClient {
     private static final int port = 5000;
 
     public EchoClient() {
-        echoSocket = null;
-        out = null;
-        in = null;
         host = "localhost";
     }
 
-    public void sendMessage(Request message) {
+    public void sendMessage(Request message)  {
+        echoSocket = null;
+        out = null;
+        in = null;
+        String txt="";
         // open a connection with the server
         try {
             // create a socket
@@ -49,6 +50,21 @@ public class EchoClient {
             out = new PrintWriter(echoSocket.getOutputStream(), true);
             // socket's input stream
             in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+            
+            Gson gson = new Gson();
+            // send the message to the server
+            out.println(gson.toJson(message));
+             out.flush();
+           
+            txt = in.readLine();
+            // print echo
+            System.out.println("Client received echo: " + txt);
+
+            // empty message -> close connection
+            out.close();
+            in.close();
+            echoSocket.close();
+            System.out.println("Client closed the connection");
 
         } catch (UnknownHostException e) {
             System.err.println("Don't know about " + host);
@@ -60,27 +76,9 @@ public class EchoClient {
         System.out.println("Connection is established with the Server");
 
         
-        Gson gson = new Gson();
-        // send the message to the server
-        out.println(gson.toJson(message));
+        
 
-        // wait for echo
-        String txt;
-        try {
-            while((txt = in.readLine()) !=null){
-                
-            }
-            // print echo
-            System.out.println("Client received echo: " + txt);
-
-            // empty message -> close connection
-            out.close();
-            in.close();
-            echoSocket.close();
-            System.out.println("Client closed the connection");
-        } catch (IOException ex) {
-            Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
         
     }
 }

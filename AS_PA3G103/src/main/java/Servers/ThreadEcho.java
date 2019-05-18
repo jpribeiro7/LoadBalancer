@@ -32,6 +32,7 @@ class ThreadEcho extends Thread {
     // constructor receives the socket
     public ThreadEcho(Socket socket) {
         this.socket = socket;
+        out=null;in=null;
         gson = new Gson();
     }
     
@@ -52,6 +53,7 @@ class ThreadEcho extends Thread {
             Request req = gson.fromJson(request, Request.class);
             req.setCode(2);
             out.println(gson.toJson(req));
+             out.flush();
             // close everything
             out.close();
             in.close();

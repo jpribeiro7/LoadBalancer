@@ -6,11 +6,13 @@
 package Load_Balancer;
 
 import Servers.EchoServer;
+import Utils.Request;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 
 public class LoadBalance {
@@ -30,16 +32,17 @@ public class LoadBalance {
         serverSocket = new ServerSocket(port);
         
         System.out.println("Load Balancer is listening on port: " + port);
-        startCluster(5);
+        startCluster(1);
         while (true) {
             System.out.println("Load Balancer is accepting a new connection");
             // wait for a new connection/client
             Socket clientSocket = serverSocket.accept();
             // create a new thread to deal with the new client
             ThreadEcho te = new ThreadEcho(clientSocket);
-            System.out.println("Load Balancer: " + clientSocket.getLocalPort());
             // Launch the Thread (run).
             te.start();
+           
+            
         }
         // create queue to store requests
         

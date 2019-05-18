@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         
-        int argsize = 5;
+        int argsize = 10;
         Thread myThreads[] = new Thread[argsize];
         for (int j = 0; j < argsize; j++) {
             myThreads[j] = new Thread(){

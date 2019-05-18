@@ -25,7 +25,7 @@ public class EchoServer extends Thread{
     
     private ServerSocket serverSocket = null;
     private Socket clientSocket = null;
-    private PriorityQueue queue;
+    private PriorityQueue<Request> queue;
     private int queue_limit;
     private int port;
 
@@ -48,15 +48,14 @@ public class EchoServer extends Thread{
             try {
                 // wait for a new connection/client
                 clientSocket = serverSocket.accept();
-               
+               // create a new thread to deal with the new client
+            ThreadEcho te=new ThreadEcho(clientSocket);
+            // Launch the Thread (run).
+            te.start();
             } catch (IOException ex) {
                 Logger.getLogger(EchoServer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            // create a new thread to deal with the new client
-            ThreadEcho te=new ThreadEcho(clientSocket);
-            System.out.println("Socket: " + clientSocket.getLocalPort());
-            // Launch the Thread (run).
-            te.start();
+            
         }
         
     }
