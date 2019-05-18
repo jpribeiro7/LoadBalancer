@@ -5,16 +5,26 @@
  */
 package Clients;
 
-import Utils.Request;
-import com.google.gson.GsonBuilder;
-
-
 public class Main {
-    
-        public static void main( String[] args ) throws Exception{
-            Client client = new Client();
-            client.computePI();
+
+    public static void main(String[] args) throws Exception {
+        
+        int argsize = 5;
+        Thread myThreads[] = new Thread[argsize];
+        for (int j = 0; j < argsize; j++) {
+            myThreads[j] = new Thread(){
+                public void run(){
+                  Client client = new Client();
+                  client.computePI();
+                }
+  };
+            myThreads[j].start();
             
         }
-    
+        for (int j = 0; j < argsize; j++) {
+            myThreads[j].join(); //todo add catch exception
+        }
+        
+    }
+
 }

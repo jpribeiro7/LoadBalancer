@@ -29,15 +29,18 @@ public class EchoServer extends Thread{
     private int queue_limit;
     private int port;
 
-    public EchoServer(int port,int queue_limit) throws IOException{
+    public EchoServer(int port,int queue_limit){
         this.port = port;
-        serverSocket = new ServerSocket(port);
         queue = new PriorityQueue(queue_limit);
     }
 
     @Override
     public void run() {
-           
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException ex) {
+            Logger.getLogger(EchoServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         System.out.println( "Server is listening on port: " + port );
 
         while (true ) {
@@ -63,5 +66,7 @@ public class EchoServer extends Thread{
             queue.add(req);
         }
     }
-    
+    public int getPort(){
+        return this.port;
+    }
 }

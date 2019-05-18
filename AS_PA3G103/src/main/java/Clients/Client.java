@@ -6,6 +6,7 @@
 package Clients;
 
 import Utils.Request;
+import java.util.Random;
 
 /**
  *
@@ -27,7 +28,8 @@ public class Client {
     }
     
     public void computePI(){
-        Request message = new Request(request_number,id,1);
+        Random r = new Random();
+        Request message = new Request(id,request_number,01,10,r.nextInt(11)+10);
         echo.sendMessage(message);
         request_number++;
     }

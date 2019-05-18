@@ -26,9 +26,9 @@ import java.util.logging.Logger;
  */
 public class EchoClient {
 
-    private static Socket echoSocket;
-    private static PrintWriter out;
-    private static BufferedReader in;
+    private Socket echoSocket;
+    private PrintWriter out;
+    private BufferedReader in;
     private static String host;
     private static final int port = 5000;
 
@@ -44,6 +44,7 @@ public class EchoClient {
         try {
             // create a socket
             echoSocket = new Socket(host, port);
+            
             // socket's output stream
             out = new PrintWriter(echoSocket.getOutputStream(), true);
             // socket's input stream
@@ -58,9 +59,6 @@ public class EchoClient {
         }
         System.out.println("Connection is established with the Server");
 
-        // input stream from the console (messages to be sento to the server)
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-        BufferedReader stdIn1 = new BufferedReader(new InputStreamReader(System.in));
         
         Gson gson = new Gson();
         // send the message to the server
@@ -69,7 +67,9 @@ public class EchoClient {
         // wait for echo
         String txt;
         try {
-            txt = in.readLine();
+            while((txt = in.readLine()) !=null){
+                
+            }
             // print echo
             System.out.println("Client received echo: " + txt);
 

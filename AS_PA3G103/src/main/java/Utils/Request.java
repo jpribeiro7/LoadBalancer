@@ -18,21 +18,40 @@ public class Request implements Comparator<Request>{
     @Expose
     private int client_id;
     @Expose
-    private int time;
+    private int code;
+    @Expose
+    private int iterations;
+    @Expose
+    private int deadline;
     
-    public Request(int request_number, int client_id, int time){
-        this.time = time;
+    
+    public Request( int client_id,int request_number, int code, int iterations, int deadline){
+        this.iterations = iterations;
         this.client_id = client_id;
         this.id =client_id*1000 +request_number;
+        this.code = code;
+        this.iterations = iterations;
+        this.deadline = deadline;
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    
+    
+    
     @Override
     public int compare(Request t, Request t1) {
         
-        if(t.time == t1.time){
+        if(t.deadline == t1.deadline){
             return t.id - t1.id;
         }
-        return t.time-t1.time;
+        return t.deadline-t1.deadline;
         
     }
 }

@@ -41,7 +41,8 @@ class ThreadEcho extends Thread {
             System.out.println("Load Balancer received a new message: " + request);
             //out.println("Message sent was:" + request);
             // close everything
-            String response = sendMessage(request,5001);
+            
+            String response = sendMessage(request,LoadBalance.getFreeServer().getPort());
             out.println(response);
             out.close();
             in.close();
