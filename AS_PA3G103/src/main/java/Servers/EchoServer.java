@@ -5,9 +5,11 @@
  */
 package Servers;
 
+import Utils.Request;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,12 +24,15 @@ import java.util.logging.Logger;
 public class EchoServer extends Thread{
     
     private ServerSocket serverSocket = null;
-    private Socket clientSocket = null;;
+    private Socket clientSocket = null;
+    private PriorityQueue queue;
+    private int queue_limit;
     private int port;
 
-    public EchoServer(int port) throws IOException{
+    public EchoServer(int port,int queue_limit) throws IOException{
         this.port = port;
-        serverSocket = new ServerSocket(port);  
+        serverSocket = new ServerSocket(port);
+        queue = new PriorityQueue(queue_limit);
     }
 
     @Override
@@ -40,6 +45,7 @@ public class EchoServer extends Thread{
             try {
                 // wait for a new connection/client
                 clientSocket = serverSocket.accept();
+               
             } catch (IOException ex) {
                 Logger.getLogger(EchoServer.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -52,5 +58,10 @@ public class EchoServer extends Thread{
         
     }
     
+    public void add(Request req){
+        if( queue.size()+1 <= queue_limit ){
+            queue.add(req);
+        }
+    }
     
 }

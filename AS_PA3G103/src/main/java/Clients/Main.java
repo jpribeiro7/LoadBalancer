@@ -5,15 +5,16 @@
  */
 package Clients;
 
-/**
- *
- * @author Nuno Aparicio
- */
+import Utils.Request;
+import com.google.gson.GsonBuilder;
+
+
 public class Main {
     
         public static void main( String[] args ) throws Exception{
-            EchoClient cliente = new EchoClient();
-            cliente.prepareRace("Hello server 5", 5005);
+            Client client = new Client();
+            client.computePI();
+            
         }
     
 }
