@@ -28,6 +28,7 @@ public class EchoServer extends Thread{
     private PriorityQueue<Request> queue;
     private int queue_limit;
     private int port;
+    private boolean running;
 
     public EchoServer(int port,int queue_limit){
         this.port = port;
@@ -38,6 +39,7 @@ public class EchoServer extends Thread{
     public void run() {
         try {
             serverSocket = new ServerSocket(port);
+            running = true;
         } catch (IOException ex) {
             Logger.getLogger(EchoServer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -48,12 +50,15 @@ public class EchoServer extends Thread{
             try {
                 // wait for a new connection/client
                 clientSocket = serverSocket.accept();
+                
                // create a new thread to deal with the new client
             ThreadEcho te=new ThreadEcho(clientSocket);
             // Launch the Thread (run).
             te.start();
             } catch (IOException ex) {
-                Logger.getLogger(EchoServer.class.getName()).log(Level.SEVERE, null, ex);
+                if(!running){
+                    break;
+                }
             }
             
         }
@@ -68,4 +73,19 @@ public class EchoServer extends Thread{
     public int getPort(){
         return this.port;
     }
+
+    public PriorityQueue<Request> getQueue() {
+        return queue;
+    }
+    
+    public void terminateServer(){
+        try {
+            running = false;
+            serverSocket.close();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(EchoServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }
