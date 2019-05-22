@@ -25,39 +25,44 @@ class ThreadEcho extends Thread {
 
     private Socket socket;
     private PrintWriter out = null;
-    private BufferedReader in = null;
     private Gson gson;
+    private Request request;
 
 
     // constructor receives the socket
-    public ThreadEcho(Socket socket) {
+    public ThreadEcho(Socket socket, Request request) {
         this.socket = socket;
-        out=null;in=null;
+        out=null;
         gson = new Gson();
+        this.request = request;
     }
     
     @Override
     public void run() {
         try {
-            
+            /**
             // socket´s output stream
             out = new PrintWriter(socket.getOutputStream(), true);
-            // socket's input stream
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
-            // wait for a message from the client
-            System.out.println("Thread is waiting for a new message");
-            String request = in.readLine();
-            System.out.println("Server received a new message: "+ request);
-                
-            Request req = gson.fromJson(request, Request.class);
-            req.setCode(2);
-            out.println(gson.toJson(req));
+            request.setCode(2);
+            out.println(gson.toJson(request));
              out.flush();
             // close everything
             out.close();
-            in.close();
-            socket.close();
-        } catch (IOException ex) {Logger.getLogger(ThreadEcho.class.getName()).log(Level.SEVERE, null, ex);}
+            socket.close();/**
+            * 
+            */
+            System.out.println("Executing request with id "+request.getId());
+            Thread.sleep(6000);
+        } catch (Exception e) {Logger.getLogger(ThreadEcho.class.getName()).log(Level.SEVERE, null, e);}
     }
+    
+    //perguntar se prof deu formula
+    public void computePI(int iterations){
+        
+    }
+
+    public Request getRequest() {
+        return request;
+    }
+    
 }

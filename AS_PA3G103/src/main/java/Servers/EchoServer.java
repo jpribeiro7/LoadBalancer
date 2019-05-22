@@ -6,9 +6,13 @@
 package Servers;
 
 import Utils.Request;
+import com.google.gson.Gson;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,14 +29,17 @@ public class EchoServer extends Thread{
     
     private ServerSocket serverSocket = null;
     private Socket clientSocket = null;
-    private PriorityQueue<Request> queue;
-    private int queue_limit;
+    private static Scheduler scheduler;
     private int port;
     private boolean running;
-
+    private Gson gson;
+    private BufferedReader in = null;
+    
     public EchoServer(int port,int queue_limit){
         this.port = port;
-        queue = new PriorityQueue(queue_limit);
+        gson = new Gson();
+        scheduler = new Scheduler(queue_limit);
+        scheduler.start();
     }
 
     @Override
@@ -50,11 +57,21 @@ public class EchoServer extends Thread{
             try {
                 // wait for a new connection/client
                 clientSocket = serverSocket.accept();
+                // socket's input stream
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+                // wait for a message from the client
+                System.out.println("Thread is waiting for a new message");
+                String request = in.readLine();
+                System.out.println("Server received a new message: "+ request);
                 
-               // create a new thread to deal with the new client
-            ThreadEcho te=new ThreadEcho(clientSocket);
-            // Launch the Thread (run).
-            te.start();
+                Request req = gson.fromJson(request, Request.class);
+                
+                
+               // create a new thread to deal with the new client and send it to the queue
+                ThreadEcho te=new ThreadEcho(clientSocket,req);
+                add(te);
+            
             } catch (IOException ex) {
                 if(!running){
                     break;
@@ -65,17 +82,18 @@ public class EchoServer extends Thread{
         
     }
     
-    public void add(Request req){
-        if( queue.size()+1 <= queue_limit ){
-            queue.add(req);
-        }
+    public boolean add(ThreadEcho e){
+        return scheduler.add(e);
     }
     public int getPort(){
         return this.port;
     }
 
-    public PriorityQueue<Request> getQueue() {
-        return queue;
+    public ArrayList<Request> getQueue() {
+        PriorityQueue<ThreadEcho> requests_handler =  scheduler.getQueue();
+        ArrayList<Request> requests = new ArrayList<>();
+        requests_handler.forEach(cnsmr->requests.add(cnsmr.getRequest()));
+        return requests;
     }
     
     public void terminateServer(){
