@@ -23,15 +23,18 @@ public class Request implements Comparator<Request>{
     private int iterations;
     @Expose
     private int deadline;
+    @Expose
+    private int porta;
     
     
-    public Request( int client_id,int request_number, int code, int iterations, int deadline){
+    public Request( int client_id,int request_number, int code, int iterations, int deadline, int porta){
         this.iterations = iterations;
         this.client_id = client_id;
         this.id =client_id*1000 +request_number;
         this.code = code;
         this.iterations = iterations;
         this.deadline = deadline;
+        this.porta = porta;
     }
 
     public int getCode() {
@@ -74,8 +77,13 @@ public class Request implements Comparator<Request>{
         this.deadline = deadline;
     }
 
-     
-    
+    public int getPorta() {
+        return porta;
+    }
+
+    public void setPorta(int porta) {
+        this.porta = porta;
+    }
     
     @Override
     public int compare(Request t, Request t1) {
