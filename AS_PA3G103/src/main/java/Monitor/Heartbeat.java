@@ -5,10 +5,9 @@
  */
 package Monitor;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JLabel;
+
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -17,11 +16,39 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Heartbeat extends javax.swing.JFrame {
 
+    private static MonitorServer server;
+    private static Map<Integer,Integer> cluster;
+    private DefaultTableModel model;
+
     /**
      * Creates new form Heartbeat
      */
     public Heartbeat() {
         initComponents();
+        server = new MonitorServer();
+        
+        cluster = new HashMap<>();
+    }
+
+    public void loadTable() {
+
+        model = (DefaultTableModel) jTable1.getModel();
+        boolean t;
+        for (Integer key:cluster.keySet()) {
+            t = Monitor.isPortInUse(key);
+
+            // insert row to the model from jtextfields using addRow method
+            if (t) {
+
+                model.addRow(new Object[]{key, "-", "AVAILABLE"});
+            } else {
+
+                model.addRow(new Object[]{key, "-", "NOT AVAILABLE"});
+            }
+        }
+    }
+    public static void addServer(int port, int load){
+        cluster.put(port,load);
     }
 
     /**
@@ -39,13 +66,18 @@ public class Heartbeat extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Ports used", "Ports free"
+                "Ports", "Number_Requests", "Availability"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -80,6 +112,10 @@ public class Heartbeat extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+loadTable();        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowActivated
+
     /**
      * @param args the command line arguments
      */
@@ -110,37 +146,11 @@ public class Heartbeat extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
-                boolean t = false;
-                Monitor m = new Monitor();
-                Heartbeat hb = new Heartbeat();
-                int [] server_list = {5000,5001,5002,5003,5004,5005,5006};
-                JLabel[] labels = new JLabel[server_list.length];
-                for(int i=0;i<server_list.length;i++){
-                 try {
-            // TODO add your handling code here:
-            t = m.isPortInUse(server_list[i]);
-        } catch (IOException ex) {
-            Logger.getLogger(Monitore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        DefaultTableModel model = (DefaultTableModel)hb.jTable1.getModel();
-
-         // insert row to the model from jtextfields using addRow method
-        
-               
-               if(t){ 
-               
-                model.addRow(new Object[]{server_list[i]});
-                }
-               else{
-                  
-                    model.addRow(new Object[]{"-",server_list[i]});
-               }
-               hb.setVisible(true);
-            }
+               new Heartbeat().setVisible(true);
             }
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

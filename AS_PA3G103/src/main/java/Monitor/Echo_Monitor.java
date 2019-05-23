@@ -47,9 +47,9 @@ class Echo_Monitor extends Thread {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             // wait for a message from the client
-            System.out.println("Client_Server is waiting for a new message");
+            System.out.println("Monitor is waiting for a new message");
             String request = in.readLine();
-            System.out.println("Client_Server received a new message: "+ request);
+            System.out.println("Monitor received a new message: "+ request);
 
             
             // close everything

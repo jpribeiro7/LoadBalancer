@@ -21,6 +21,7 @@ import java.util.logging.Logger;
  */
 public class ServerManager extends javax.swing.JFrame {
     private final int load_balancer_port = 9000;
+    private final int monitor = 1000;
     private Gson gson;
     /**
      * Creates new form ServerManager
@@ -126,6 +127,7 @@ public class ServerManager extends javax.swing.JFrame {
         }
         ServerManageRequest req = new ServerManageRequest("available_servers",ports);
         sendMessage(gson.toJson(req), load_balancer_port);
+        sendMessage(gson.toJson(req), monitor);
         jLabel2.setText("Number of active servers: "+Server.getNumberActiveServers());
         
         
