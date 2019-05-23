@@ -37,10 +37,10 @@ public class EchoServer extends Thread{
     private Gson gson;
     private BufferedReader in = null;
     
-    public EchoServer(int port,int queue_limit){
+    public EchoServer(int port,int queue_limit, int max_threads){
         this.port = port;
         gson = new Gson();
-        scheduler = new Scheduler(queue_limit);
+        scheduler = new Scheduler(queue_limit,max_threads);
         scheduler.start();
     }
 
@@ -74,7 +74,11 @@ public class EchoServer extends Thread{
                     // create a new thread to deal with the new client and send it to the queue
                     clientSocket = new Socket("localhost",req.getPorta());
                     ThreadEcho te=new ThreadEcho(clientSocket,req);
-                    add(te);
+                    if(!add(te)){
+                        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                        req.setCode(03);
+                        out.println(gson.toJson(req));
+                    };
                 }else if(request.contains("getload")){
                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                     System.out.println("I am server"+port+" and i have load:"+getLoad());

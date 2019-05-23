@@ -16,12 +16,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Scheduler extends Thread{
     private int queue_limit;
     private PriorityQueue<ThreadEcho> queue;
-    private final static int max_threads_running = 5;
+    private int max_threads_running = 5;
     private int threads_running;
     private ThreadPoolExecutor second;
 
-    public Scheduler(int queue_limit) {
+    public Scheduler(int queue_limit, int max_threads) {
         this.queue_limit = queue_limit;
+        this.max_threads_running = max_threads;
         queue = new PriorityQueue<>(queue_limit, new Comparator<ThreadEcho>(){
             @Override
             public int compare(ThreadEcho t, ThreadEcho t1) {

@@ -26,7 +26,6 @@ public class Monitor {
  String host = "localhost";
   try {
     (new Socket(host, port)).close();
-    System.out.println("THIS IS SOMETHING");
     result = true;
   }
   catch(SocketException e) {
