@@ -30,7 +30,7 @@ public class Server extends JFrame {
     public Server(int max_threads, int max_queue) {
         initComponents();
         number_servers++;
-        id = number_servers;
+        this.id = number_servers;
         echo = new EchoServer(port+id, max_queue,max_threads);
         echo.start();
         this.setTitle("Server "+id);
@@ -51,7 +51,6 @@ public class Server extends JFrame {
             echo.terminateServer();
             echo.join();
             System.out.println("Server "+id+" has been shutdown"); 
-            number_servers--;
             KillServer ks = new KillServer("kill_server",port+id);
             Gson gson = new Gson();
             ServerManager.sendMessage(gson.toJson(ks),9000);
