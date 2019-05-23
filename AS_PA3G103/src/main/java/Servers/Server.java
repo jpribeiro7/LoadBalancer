@@ -27,11 +27,11 @@ public class Server extends JFrame {
     /**
      * Creates new form Server
      */
-    public Server(int max_threads) {
+    public Server(int max_threads, int max_queue) {
         initComponents();
         number_servers++;
         id = number_servers;
-        echo = new EchoServer(port+id, 10,max_threads);
+        echo = new EchoServer(port+id, max_queue,max_threads);
         echo.start();
         this.setTitle("Server "+id);
         
