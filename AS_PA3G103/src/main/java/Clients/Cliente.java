@@ -6,12 +6,15 @@
 package Clients;
 import Servers.*;
 import Utils.Request;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import  javax.swing.JFrame;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 /**
  *
@@ -21,6 +24,10 @@ public class Cliente extends JFrame {
    private static int n_clients=0;                              //total clients
     private EchoClient echo;                                       //echo client
     private Clie_Server server;                                     //client server
+    private Request MessageToSend;
+    private boolean go = false;
+    private int i = 0;
+    DefaultTableModel modelSent,modelRecv;
     
     
     private int id=0;                                  //client id is sequential
@@ -38,6 +45,8 @@ public class Cliente extends JFrame {
         echo = new EchoClient();
         server = new Clie_Server(portaCliente);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        modelSent = (DefaultTableModel) Sent_table.getModel();
+        modelRecv = (DefaultTableModel) Recv_table.getModel();
         
         }
 
@@ -46,11 +55,56 @@ public class Cliente extends JFrame {
         Random r = new Random();
         Request message = new Request("request",id,request_number,01,interactions,0.0,deadline,portaCliente);
         echo.sendMessage(message);
+        setMessageToSend(message);
         request_number++;
+    }
+
+    public Request getMessageToSend() {
+        return MessageToSend;
+    }
+
+    public void setMessageToSend(Request MessageToSend) {
+        this.MessageToSend = MessageToSend;
     }
 
     public static int getN_clients() {
         return n_clients;
+    }
+    
+    public void timer(){
+    Timer timer = new Timer(0, new ActionListener() {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+       if(i == 2){
+       go = true;
+       AddReceveivedRequests();
+       }
+       i++;
+    }
+    });
+
+    timer.setDelay(650); // delay for 1 seconds    
+    timer.start();
+    
+
+    }
+    
+    public void AddReceveivedRequests(){
+        if(go){
+        Request req = server.getRequest();
+        if(req!=null){  
+        modelRecv.addRow(new Object[]{
+                                req.getClient_id(),
+                                req.getId(),
+                                req.getCode(),
+                                req.getIterations(),
+                                req.getDeadline(), 
+                                req.getPi()});
+        
+        }    
+        }
+        go = false;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -70,6 +124,12 @@ public class Cliente extends JFrame {
         deadline_text = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         ID_LABEL = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Recv_table = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        Sent_table = new javax.swing.JTable();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -98,6 +158,12 @@ public class Cliente extends JFrame {
 
         jLabel4.setText("Deadline:");
 
+        Interactions_text.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Interactions_textActionPerformed(evt);
+            }
+        });
+
         jButton1.setText("Send Request");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -105,52 +171,108 @@ public class Cliente extends JFrame {
             }
         });
 
+        Recv_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Client ID", "Request ID", "Code", "Iterations", "DeadLine", "PI"
+            }
+        ));
+        Recv_table.setColumnSelectionAllowed(true);
+        Recv_table.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                Recv_tablePropertyChange(evt);
+            }
+        });
+        jScrollPane1.setViewportView(Recv_table);
+        Recv_table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+        Sent_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Client ID", "Request ID", "Code", "Iterations", "DeadLine"
+            }
+        ));
+        Sent_table.setColumnSelectionAllowed(true);
+        jScrollPane2.setViewportView(Sent_table);
+
+        jLabel5.setText("Requests sent");
+
+        jLabel6.setText("Requests received");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(47, 47, 47))
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(392, 392, 392)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(51, 51, 51)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(Interactions_text, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                            .addComponent(deadline_text)
-                            .addComponent(ID_LABEL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(409, 409, 409)
+                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(ID_LABEL, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(Interactions_text, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(deadline_text, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(66, 66, 66)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(64, 64, 64))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(158, 158, 158))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ID_LABEL, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(Interactions_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(deadline_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(45, 45, 45)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ID_LABEL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(Interactions_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)
+                            .addComponent(deadline_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(409, 409, 409))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         pack();
@@ -167,7 +289,28 @@ public class Cliente extends JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         computePI(Integer.parseInt(Interactions_text.getText()), Integer.parseInt(deadline_text.getText()));
+        Request req = getMessageToSend();
+        if(req!=null){  
+        modelSent.addRow(new Object[]{
+                                req.getClient_id(),
+                                req.getId(),
+                                req.getCode(),
+                                req.getIterations(),
+                                req.getDeadline()});
+        
+        }
+        go = true;
+        i=0;
+        timer();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void Interactions_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Interactions_textActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Interactions_textActionPerformed
+
+    private void Recv_tablePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_Recv_tablePropertyChange
+        // TODO add your handling code here:    
+    }//GEN-LAST:event_Recv_tablePropertyChange
 
     /**
      * @param args the command line arguments
@@ -196,19 +339,24 @@ public class Cliente extends JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-
+        //</editor-fold>
+        //</editor-fold>
+        System.out.println("ednuaenaieu");
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Cliente().setVisible(true);
-                
+
             }
         });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ID_LABEL;
     private javax.swing.JTextField Interactions_text;
+    private javax.swing.JTable Recv_table;
+    private javax.swing.JTable Sent_table;
     private javax.swing.JTextField deadline_text;
     private javax.swing.JButton jButton1;
     private javax.swing.JFrame jFrame1;
@@ -216,5 +364,9 @@ public class Cliente extends JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }
