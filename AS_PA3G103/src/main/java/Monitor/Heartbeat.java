@@ -6,6 +6,9 @@
 package Monitor;
 
 
+import static Monitor.MonitorServer.sendMessage;
+import Utils.ServerManageRequest;
+import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.table.DefaultTableModel;
@@ -31,7 +34,7 @@ public class Heartbeat extends javax.swing.JFrame {
     }
 
     public void loadTable() {
-
+        Map<Integer,Integer> map = new HashMap();
         model = (DefaultTableModel) jTable1.getModel();
         boolean t;
         for (Integer key:cluster.keySet()) {
@@ -39,13 +42,20 @@ public class Heartbeat extends javax.swing.JFrame {
 
             // insert row to the model from jtextfields using addRow method
             if (t) {
-
-                model.addRow(new Object[]{key, "-", "AVAILABLE"});
+                int load = Monitor.getLoadFromPort(key);
+                map.put(key,load);
+                model.addRow(new Object[]{key, load, "AVAILABLE"});
             } else {
 
                 model.addRow(new Object[]{key, "-", "NOT AVAILABLE"});
             }
         }
+        if(!map.isEmpty()){
+            ServerManageRequest request = new ServerManageRequest("available_servers", map);
+            Gson gson = new Gson();
+            sendMessage(gson.toJson(request), 9000);
+        }
+        
     }
     public static void addServer(int port, int load){
         cluster.put(port,load);

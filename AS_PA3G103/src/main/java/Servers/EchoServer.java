@@ -5,11 +5,13 @@
  */
 package Servers;
 
+import Utils.GetLoad;
 import Utils.Request;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -64,14 +66,25 @@ public class EchoServer extends Thread{
                 System.out.println("Thread is waiting for a new message");
                 String request = in.readLine();
                 System.out.println("Server received a new message: "+ request);
+                if(request==null){
+                    System.out.println("null req");
+                }else if(request.contains("request")){
+                    Request req = gson.fromJson(request, Request.class);
+
+                    // create a new thread to deal with the new client and send it to the queue
+                    clientSocket = new Socket("localhost",req.getPorta());
+                    ThreadEcho te=new ThreadEcho(clientSocket,req);
+                    add(te);
+                }else if(request.contains("getload")){
+                    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    System.out.println("I am server"+port+" and i have load:"+getLoad());
+                    GetLoad getLoad = new GetLoad("getload", getLoad());
+                    out.println(gson.toJson(getLoad));
+                    out.flush();
+                    // close everything
+                    out.close();
+                 }
                 
-                Request req = gson.fromJson(request, Request.class);
-                
-                
-               // create a new thread to deal with the new client and send it to the queue
-               clientSocket = new Socket("localhost",req.getPorta());
-                ThreadEcho te=new ThreadEcho(clientSocket,req);
-                add(te);
             
             } catch (IOException ex) {
                 if(!running){

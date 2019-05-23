@@ -30,6 +30,7 @@ public class MonitorServer extends Thread{
     private int port = 1000;
     private PrintWriter out = null;
     private BufferedReader in = null;
+    private final static int loadbalancer=9000;
     
     public MonitorServer(){
         start();
@@ -74,5 +75,20 @@ public class MonitorServer extends Thread{
 
             }           
         }     
+    }
+    
+    public static void sendMessage(String message, int port){
+        try {
+            Socket s = new Socket("localhost",port);
+            // socket's output stream
+            PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+            // send the message to the server
+            out.println(message);
+            out.close();
+            s.close();
+        } catch (IOException ex) {
+            Logger.getLogger(MonitorServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }

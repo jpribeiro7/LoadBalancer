@@ -126,7 +126,6 @@ public class ServerManager extends javax.swing.JFrame {
              s.setVisible(true);
         }
         ServerManageRequest req = new ServerManageRequest("available_servers",ports);
-        sendMessage(gson.toJson(req), load_balancer_port);
         sendMessage(gson.toJson(req), monitor);
         jLabel2.setText("Number of active servers: "+Server.getNumberActiveServers());
         
