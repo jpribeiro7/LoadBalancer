@@ -62,7 +62,7 @@ public class Cliente extends JFrame {
     public Request getMessageToSend() {
         return MessageToSend;
     }
-
+    
     public void setMessageToSend(Request MessageToSend) {
         this.MessageToSend = MessageToSend;
     }
@@ -76,11 +76,7 @@ public class Cliente extends JFrame {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-       if(i == 2){
-       go = true;
        AddReceveivedRequests();
-       }
-       i++;
     }
     });
 
@@ -91,20 +87,20 @@ public class Cliente extends JFrame {
     }
     
     public void AddReceveivedRequests(){
-        if(go){
-        Request req = server.getRequest();
-        if(req!=null){  
-        modelRecv.addRow(new Object[]{
-                                req.getClient_id(),
-                                req.getId(),
-                                req.getCode(),
-                                req.getIterations(),
-                                req.getDeadline(), 
-                                req.getPi()});
+        modelRecv.getDataVector().removeAllElements();
+        ArrayList<Request> reqs = server.getRequestList();
         
-        }    
-        }
-        go = false;
+            if(reqs.isEmpty())
+                return;
+
+            reqs.forEach(req ->modelRecv.addRow(new Object[]{
+                                    req.getClient_id(),
+                                    req.getId(),
+                                    req.getCode(),
+                                    req.getIterations(),
+                                    req.getDeadline(), 
+                                    req.getPi()}));
+
     }
     /**
      * This method is called from within the constructor to initialize the form.

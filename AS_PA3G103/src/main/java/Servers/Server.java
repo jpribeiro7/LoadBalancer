@@ -67,17 +67,14 @@ public class Server extends JFrame {
     }
     
     public void Load(){
-        if(i>0)
-            model.getDataVector().removeAllElements();
-        i++;
+        int rowCount = model.getRowCount();
+            //Remove rows one by one from the end of the table
+            for (int i = rowCount - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
         ArrayList<Request> requests = echo.getQueue();   
-
-        if(requests.isEmpty()){
-            model.getDataVector().removeAllElements();
+        if(requests.isEmpty())
             return;
-        }
-
-            
 
         requests.forEach(cnsmr->
                             model.addRow(new Object[]{
@@ -92,13 +89,14 @@ public class Server extends JFrame {
     
     public void timer(){
     Timer timer = new Timer(0, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+           Load();
+           
+        }
+        });
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Load();     
-    }
-    });
- 
+    timer.setDelay(5000); // delay for 1 seconds    
     timer.start();
     
 

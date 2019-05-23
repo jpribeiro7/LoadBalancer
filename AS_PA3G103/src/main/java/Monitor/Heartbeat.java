@@ -79,7 +79,7 @@ public class Heartbeat extends javax.swing.JFrame {
     }
     });
 
-    timer.setDelay(6000); // delay for 1 seconds    
+    timer.setDelay(500); // delay for 1 seconds    
     timer.start();
     
 

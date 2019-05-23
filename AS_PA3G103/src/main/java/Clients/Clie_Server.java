@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
+import java.util.ArrayList;
 
 /**
  *
@@ -30,9 +31,12 @@ public class Clie_Server extends Thread{
     private BufferedReader in = null;
     private Request request;
     private Gson gson;
+    private ArrayList<Request> RequestList;
+
     
     public Clie_Server(int port){
         this.port = port;
+        RequestList = new ArrayList<>();
         gson = new Gson();
         start();
     }
@@ -43,6 +47,10 @@ public class Clie_Server extends Thread{
 
     public void setRequest(Request request) {
         this.request = request;
+    }
+
+    public ArrayList<Request> getRequestList() {
+        return RequestList;
     }
     
     
@@ -74,6 +82,7 @@ public class Clie_Server extends Thread{
             Request req = gson.fromJson(message, Request.class);
             
             this.setRequest(req);
+            RequestList.add(req);
             System.out.println("Client_Server received a new message: "+ message);
             
             // close everything

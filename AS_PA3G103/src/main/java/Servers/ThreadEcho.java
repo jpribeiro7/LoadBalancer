@@ -56,7 +56,11 @@ class ThreadEcho extends Thread {
         double pi =0;
         double denominator = 1;
        for (int x = 0; x < iterations; x++) {
- 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ThreadEcho.class.getName()).log(Level.SEVERE, null, ex);
+            }
          if (x % 2 == 0) {
             pi = pi + (1 / denominator);
          } else {
