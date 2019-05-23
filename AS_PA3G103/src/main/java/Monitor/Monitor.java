@@ -1,14 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Monitor;
 
-/**
- *
- * @author Pedro
- */
+import Utils.Request;
+import java.io.*;
+import java.net.*;
+import java.util.Random;
+
+
 public class Monitor {
-    
+
+
+ public static void main(String args[]) throws IOException {
+
+ }
+ 
+
+ public boolean isPortInUse(int port) throws IOException {
+  // Assume no connection is possible.
+  boolean result = false;
+    boolean x = false;
+    String host = "localhost";
+  try {
+    (new Socket(host, port)).close();
+    result = true;
+  }
+  catch(SocketException e) {
+    // Could not connect.
+  }
+
+  return result;
+}
 }
