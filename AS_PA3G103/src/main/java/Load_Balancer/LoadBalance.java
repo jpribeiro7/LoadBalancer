@@ -5,34 +5,25 @@
  */
 package Load_Balancer;
 
-import Servers.EchoServer;
-import Utils.Request;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoadBalance {
 
     private static ServerSocket serverSocket = null;
-    private static final int port = 5000;
-    private static List<EchoServer> cluster;
-
-    public LoadBalance(){
-        cluster = new ArrayList<>();
-    }
+    private static final int port = 9000;
+    private static Map<Integer,Integer> cluster = new HashMap<>();
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        LoadBalance lb = new LoadBalance();
         
         // create a server socket
         serverSocket = new ServerSocket(port);
         
         System.out.println("Load Balancer is listening on port: " + port);
-        startCluster(1);
         while (true) {
             System.out.println("Load Balancer is accepting a new connection");
             // wait for a new connection/client
@@ -48,21 +39,27 @@ public class LoadBalance {
         
 
     }
-    
-    public static void addServer(int port, int limit_requests){
-        cluster.add(new EchoServer(port, limit_requests));
-        
+   
+    public static void addPort(Integer port, Integer load){
+        cluster.put(port,load);
     }
     
-    public static EchoServer getFreeServer(){
-        return cluster.get(0);
+    public static void removePort(Integer port){
+         cluster.remove(port);
+     }
+    
+    public static Integer getFreePort(){
+        int min_load= 100;
+        int current_port=0;
+        for(Map.Entry<Integer,Integer> entry: cluster.entrySet()){
+                   if(entry.getValue()<min_load){
+                       min_load = entry.getValue();
+                       current_port=entry.getKey();
+                   }
+                }
+        return current_port;
     }
     
-    public static void startCluster(int serverNumber){
-        for (int i = 1; i <= serverNumber; i++) {
-             addServer(port+i, 10);
-        }
-        cluster.forEach(cnsmr->cnsmr.start());
-    }
 
+    
 }

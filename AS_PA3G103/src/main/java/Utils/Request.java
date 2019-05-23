@@ -22,17 +22,19 @@ public class Request implements Comparator<Request>{
     @Expose
     private int iterations;
     @Expose
+    private double pi;
+    @Expose
     private int deadline;
     @Expose
     private int porta;
     
     
-    public Request( int client_id,int request_number, int code, int iterations, int deadline, int porta){
-        this.iterations = iterations;
+    public Request( int client_id,int request_number, int code, int iterations,double pi, int deadline, int porta){
         this.client_id = client_id;
         this.id =client_id*1000 +request_number;
         this.code = code;
         this.iterations = iterations;
+        this.pi = pi;
         this.deadline = deadline;
         this.porta = porta;
     }
@@ -84,6 +86,15 @@ public class Request implements Comparator<Request>{
     public void setPorta(int porta) {
         this.porta = porta;
     }
+
+
+    public double getPi() {
+        return pi;
+    }
+
+    public void setPi(double pi) {
+        this.pi = pi;
+    }
     
     @Override
     public int compare(Request t, Request t1) {
@@ -94,4 +105,10 @@ public class Request implements Comparator<Request>{
         return t.deadline-t1.deadline;
         
     }
+
+    @Override
+    public String toString() {
+        return "Request{" + "id=" + id + ", client_id=" + client_id + ", code=" + code + ", iterations=" + iterations + ", deadline=" + deadline + ", porta=" + porta + '}';
+    }
+    
 }

@@ -8,9 +8,6 @@ package Servers;
 
 import Utils.Request;
 import com.google.gson.Gson;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -40,7 +37,6 @@ class ThreadEcho extends Thread {
     @Override
     public void run() {
         try {
-            /**
             // socket´s output stream
             out = new PrintWriter(socket.getOutputStream(), true);
             request.setCode(2);
@@ -48,9 +44,9 @@ class ThreadEcho extends Thread {
              out.flush();
             // close everything
             out.close();
-            socket.close();/**
-            * 
-            */
+            socket.close();
+            
+            request.setCode(2);
             System.out.println("Executing request with id "+request.getId());
             Thread.sleep(6000);
         } catch (Exception e) {Logger.getLogger(ThreadEcho.class.getName()).log(Level.SEVERE, null, e);}
@@ -64,5 +60,11 @@ class ThreadEcho extends Thread {
     public Request getRequest() {
         return request;
     }
+
+    @Override
+    public String toString() {
+        return "ThreadEcho{" + "request=" + request + '}';
+    }
+    
     
 }

@@ -6,9 +6,6 @@
 package Servers;
 import Utils.Request;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import  javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -20,17 +17,23 @@ public class Server extends JFrame {
     static int number_servers=0;
     static int port = 5000;
     private int id;
+    private DefaultTableModel model;
     /**
      * Creates new form Server
      */
     public Server() {
         initComponents();
+        number_servers++;
         id = number_servers;
         echo = new EchoServer(port+id, 10);
         echo.start();
         this.setTitle("Server "+id);
-        number_servers++;
+        
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        model = (DefaultTableModel) jTable1.getModel();
+        
+        
     }
 
     public static int getNumberActiveServers(){
@@ -46,6 +49,12 @@ public class Server extends JFrame {
         } catch (InterruptedException ex) {
             System.out.println("Couldn't shutdown server "+id);
         }
+    }
+    public int getPort(){
+        return echo.getPort();
+    }
+    public int getLoad(){
+        return echo.getQueue().size();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -130,7 +139,6 @@ public class Server extends JFrame {
         if(requests.isEmpty()){
             return;
         }
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         requests.forEach(cnsmr->
                             model.addRow(new Object[]{
                                 cnsmr.getClient_id(),

@@ -29,7 +29,7 @@ public class EchoServer extends Thread{
     
     private ServerSocket serverSocket = null;
     private Socket clientSocket = null;
-    private static Scheduler scheduler;
+    private Scheduler scheduler;
     private int port;
     private boolean running;
     private Gson gson;
@@ -69,6 +69,7 @@ public class EchoServer extends Thread{
                 
                 
                // create a new thread to deal with the new client and send it to the queue
+               clientSocket = new Socket("localhost",req.getPorta());
                 ThreadEcho te=new ThreadEcho(clientSocket,req);
                 add(te);
             
@@ -87,6 +88,9 @@ public class EchoServer extends Thread{
     }
     public int getPort(){
         return this.port;
+    }
+    public int getLoad(){
+        return scheduler.getQueue().size();
     }
 
     public ArrayList<Request> getQueue() {

@@ -5,16 +5,10 @@
  */
 package Servers;
 
-import Utils.Request;
 import java.util.Comparator;
 import java.util.PriorityQueue;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author Pedro
@@ -42,17 +36,13 @@ public class Scheduler extends Thread{
     @Override
     public void run() {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(max_threads_running);
+        
         while(true){
             if(executor.getActiveCount()<max_threads_running && !queue.isEmpty()){
+                System.out.println(queue.toString());
                 Thread te = queue.poll();
                 if(te!=null){
                     executor.execute(te);
-                }
-            }else{
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Scheduler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
                 
@@ -72,5 +62,7 @@ public class Scheduler extends Thread{
     public PriorityQueue<ThreadEcho> getQueue() {
         return queue;
     }
+    
+    
     
 }

@@ -30,7 +30,7 @@ public class EchoClient {
     private PrintWriter out;
     private BufferedReader in;
     private static String host;
-    private static final int port = 5000;
+    private static final int port = 9000;
 
     public EchoClient() {
         host = "localhost";
