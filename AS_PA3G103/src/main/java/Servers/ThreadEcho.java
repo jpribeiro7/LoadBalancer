@@ -37,26 +37,35 @@ class ThreadEcho extends Thread {
     @Override
     public void run() {
         try {
+            System.out.println("Executing request with id "+request.getId());
             // socket´s output stream
             out = new PrintWriter(socket.getOutputStream(), true);
             request.setCode(2);
+            request.setPi(computePI(request.getIterations()));
             out.println(gson.toJson(request));
-             out.flush();
+            out.flush();
             // close everything
             out.close();
             socket.close();
             
-            request.setCode(2);
-            System.out.println("Executing request with id "+request.getId());
-            Thread.sleep(6000);
         } catch (Exception e) {Logger.getLogger(ThreadEcho.class.getName()).log(Level.SEVERE, null, e);}
     }
     
     //perguntar se prof deu formula
-    public void computePI(int iterations){
-        
+   public double computePI(int iterations){
+        double pi =0;
+        double denominator = 1;
+       for (int x = 0; x < iterations; x++) {
+ 
+         if (x % 2 == 0) {
+            pi = pi + (1 / denominator);
+         } else {
+            pi = pi - (1 / denominator);
+         }
+         denominator = denominator + 2;
+      }
+      return pi * 4;
     }
-
     public Request getRequest() {
         return request;
     }
