@@ -31,7 +31,7 @@ public class ServerManager extends javax.swing.JFrame {
         gson = new Gson();
     }
 
-    public void sendMessage(String message, int port){
+    public static void sendMessage(String message, int port){
         try {
             Socket s = new Socket("localhost",port);
             // socket's output stream
@@ -124,7 +124,7 @@ public class ServerManager extends javax.swing.JFrame {
              ports.put(s.getPort(), s.getLoad());
              s.setVisible(true);
         }
-        ServerManageRequest req = new ServerManageRequest(ports);
+        ServerManageRequest req = new ServerManageRequest("available_servers",ports);
         sendMessage(gson.toJson(req), load_balancer_port);
         jLabel2.setText("Number of active servers: "+Server.getNumberActiveServers());
         

@@ -6,29 +6,20 @@
 package Utils;
 
 import com.google.gson.annotations.Expose;
-import java.util.Map;
 
 /**
  *
  * @author Pedro
  */
-public class ServerManageRequest {
+public class KillServer {
     @Expose
     private String type;
     @Expose
-    private Map<Integer,Integer> server_ports;
+    private int port;
 
-    public ServerManageRequest(String type, Map<Integer,Integer> server_ports) {
+    public KillServer(String type, int port) {
         this.type = type;
-        this.server_ports = server_ports;
-    }
-
-    public Map<Integer,Integer> getServer_ports() {
-        return server_ports;
-    }
-
-    public void setServer_ports(Map<Integer,Integer> server_ports) {
-        this.server_ports = server_ports;
+        this.port = port;
     }
 
     public String getType() {
@@ -38,8 +29,18 @@ public class ServerManageRequest {
     public void setType(String type) {
         this.type = type;
     }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     
- 
     
+
+   
     
 }

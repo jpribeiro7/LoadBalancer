@@ -5,11 +5,9 @@ package Load_Balancer;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import Utils.KillServer;
 import Utils.ServerManageRequest;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -45,15 +43,26 @@ class ThreadEcho extends Thread {
 
             String request = in.readLine();
             System.out.println("Request to load balancer from "+socket.getPort()+": "+request);
-            if(request.contains("client_id")){
-                sendMessage(request,LoadBalance.getFreePort());
+            if(request.contains("request")){
+                int port = LoadBalance.getFreePort();
+                if(port!=-1){
+                    sendMessage(request,port);
+                }else{
+                    out = new PrintWriter(socket.getOutputStream(), true);
+                    System.out.println("No servers available");
+                    out.close();
+                }
+                
             
-            }else{
+            }else if(request.contains("available_servers")){
                 ServerManageRequest server = gson.fromJson(request, ServerManageRequest.class);
                 Map<Integer,Integer> ports = server.getServer_ports();
                 for(Entry<Integer,Integer> entry: ports.entrySet()){
                     LoadBalance.addPort(entry.getKey(),entry.getValue());
                 }
+            }else if(request.contains("kill_server")){
+                KillServer ks = gson.fromJson(request, KillServer.class);
+                LoadBalance.removePort(ks.getPort());
             }
             in.close();
             socket.close();

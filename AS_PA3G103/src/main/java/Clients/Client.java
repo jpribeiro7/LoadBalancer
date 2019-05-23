@@ -35,7 +35,7 @@ public class Client {
     
     public void computePI(){
         Random r = new Random();
-        Request message = new Request(id,request_number,01,10,0,r.nextInt(11)+10,portaCliente);
+        Request message = new Request("request",id,request_number,01,10,0,r.nextInt(11)+10,portaCliente);
         echo.sendMessage(message);
         request_number++;
     }

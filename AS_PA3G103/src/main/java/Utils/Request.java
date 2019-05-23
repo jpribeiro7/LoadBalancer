@@ -14,6 +14,8 @@ import java.util.Comparator;
  */
 public class Request implements Comparator<Request>{
     @Expose
+    private String type;
+    @Expose
     private int id;
     @Expose
     private int client_id;
@@ -29,7 +31,8 @@ public class Request implements Comparator<Request>{
     private int porta;
     
     
-    public Request( int client_id,int request_number, int code, int iterations,double pi, int deadline, int porta){
+    public Request(String type, int client_id,int request_number, int code, int iterations,double pi, int deadline, int porta){
+        this.type = type;
         this.client_id = client_id;
         this.id =client_id*1000 +request_number;
         this.code = code;
@@ -37,6 +40,14 @@ public class Request implements Comparator<Request>{
         this.pi = pi;
         this.deadline = deadline;
         this.porta = porta;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getCode() {

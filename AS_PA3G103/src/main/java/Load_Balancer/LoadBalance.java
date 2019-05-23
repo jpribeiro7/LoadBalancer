@@ -45,10 +45,16 @@ public class LoadBalance {
     }
     
     public static void removePort(Integer port){
-         cluster.remove(port);
+        if (cluster.containsKey(port)){
+            cluster.remove(port);
+        }
+         
      }
     
     public static Integer getFreePort(){
+        if(cluster.isEmpty()){
+            return -1;
+        }
         int min_load= 100;
         int current_port=0;
         for(Map.Entry<Integer,Integer> entry: cluster.entrySet()){
