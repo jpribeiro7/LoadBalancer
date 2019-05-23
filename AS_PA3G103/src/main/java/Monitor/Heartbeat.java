@@ -9,8 +9,11 @@ package Monitor;
 import static Monitor.MonitorServer.sendMessage;
 import Utils.ServerManageRequest;
 import com.google.gson.Gson;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -22,6 +25,8 @@ public class Heartbeat extends javax.swing.JFrame {
     private static MonitorServer server;
     private static Map<Integer,Integer> cluster;
     private DefaultTableModel model;
+    private int i = 0;
+    private boolean go = false;
 
     /**
      * Creates new form Heartbeat
@@ -34,7 +39,11 @@ public class Heartbeat extends javax.swing.JFrame {
     }
 
     public void loadTable() {
-        Map<Integer,Integer> map = new HashMap();
+        
+        Map<Integer,Integer> map = new HashMap();       
+        if(i>0)
+            model.getDataVector().removeAllElements();
+        i++;
         model = (DefaultTableModel) jTable1.getModel();
         boolean t;
         for (Integer key:cluster.keySet()) {
@@ -59,6 +68,21 @@ public class Heartbeat extends javax.swing.JFrame {
     }
     public static void addServer(int port, int load){
         cluster.put(port,load);
+    }
+    
+     public void timer(){
+    Timer timer = new Timer(0, new ActionListener() {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        loadTable();     
+    }
+    });
+
+    timer.setDelay(6000); // delay for 1 seconds    
+    timer.start();
+    
+
     }
 
     /**
@@ -123,7 +147,7 @@ public class Heartbeat extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-loadTable();        // TODO add your handling code here:
+        timer();     // TODO add your handling code here:
     }//GEN-LAST:event_formWindowActivated
 
     /**

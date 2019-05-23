@@ -7,8 +7,11 @@ package Servers;
 import Utils.KillServer;
 import Utils.Request;
 import com.google.gson.Gson;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import  javax.swing.JFrame;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 /**
  *
@@ -19,6 +22,7 @@ public class Server extends JFrame {
     static int number_servers=0;
     static int port = 5000;
     private int id;
+    private int i = 0;
     private DefaultTableModel model;
     /**
      * Creates new form Server
@@ -60,6 +64,44 @@ public class Server extends JFrame {
     }
     public int getLoad(){
         return echo.getQueue().size();
+    }
+    
+    public void Load(){
+        if(i>0)
+            model.getDataVector().removeAllElements();
+        i++;
+        ArrayList<Request> requests = echo.getQueue();   
+
+        if(requests.isEmpty()){
+            model.getDataVector().removeAllElements();
+            return;
+        }
+
+            
+
+        requests.forEach(cnsmr->
+                            model.addRow(new Object[]{
+                                cnsmr.getClient_id(),
+                                cnsmr.getId(),
+                                cnsmr.getCode(),
+                                cnsmr.getIterations(),
+                                cnsmr.getDeadline()})); 
+        
+    }
+    
+    
+    public void timer(){
+    Timer timer = new Timer(0, new ActionListener() {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Load();     
+    }
+    });
+ 
+    timer.start();
+    
+
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -171,18 +213,7 @@ public class Server extends JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-        ArrayList<Request> requests = echo.getQueue();
-        if(requests.isEmpty()){
-            return;
-        }
-        requests.forEach(cnsmr->
-                            model.addRow(new Object[]{
-                                cnsmr.getClient_id(),
-                                cnsmr.getId(),
-                                cnsmr.getCode(),
-                                cnsmr.getIterations(),
-                                cnsmr.getDeadline()})); 
-        
+        timer();
     }//GEN-LAST:event_formWindowActivated
 
     /**
