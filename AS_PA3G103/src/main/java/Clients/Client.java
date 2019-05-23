@@ -30,6 +30,7 @@ public class Client {
         portaCliente = 3000+id;
         echo = new EchoClient();
         server = new Clie_Server(portaCliente);
+        computePI();
     }
     
     public void computePI(){
@@ -38,6 +39,11 @@ public class Client {
         echo.sendMessage(message);
         request_number++;
     }
+
+    public static int getN_clients() {
+        return n_clients;
+    }
+    
     
     
 }

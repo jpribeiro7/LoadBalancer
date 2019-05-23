@@ -14,7 +14,7 @@ public class Main {
         for (int j = 0; j < argsize; j++) {
             myThreads[j] = new Thread(){
                 public void run(){
-                  Client client = new Client();
+                  Cliente client = new Cliente();
                   client.computePI();
                 }
   };

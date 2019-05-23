@@ -5,7 +5,10 @@
  */
 package Clients;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -20,6 +23,8 @@ public class Clie_Server extends Thread{
     private ServerSocket serverSocket = null;
     private Socket clientSocket = null;;
     private int port;
+    private PrintWriter out = null;
+    private BufferedReader in = null;
     
     public Clie_Server(int port){
         this.port = port;
@@ -41,10 +46,22 @@ public class Clie_Server extends Thread{
                 // wait for a new connection/client
                 clientSocket = serverSocket.accept();
                 
-               // create a new thread to deal with the new client
-            ThreadEcho_ClieServer te=new ThreadEcho_ClieServer(clientSocket);
-            // Launch the Thread (run).
-            te.start();
+                // socket´s output stream
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            // socket's input stream
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            
+            // wait for a message from the client
+            System.out.println("Client_Server is waiting for a new message");
+            String request = in.readLine();
+            System.out.println("Client_Server received a new message: "+ request);
+
+            
+            // close everything
+            out.close();
+            in.close();
+            clientSocket.close();
+                
             } catch (IOException ex) {
 
             }           

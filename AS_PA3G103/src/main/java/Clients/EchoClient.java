@@ -43,22 +43,23 @@ public class EchoClient {
         String txt="";
         // open a connection with the server
         try {
+            
             // create a socket
             echoSocket = new Socket(host, port);
             
             // socket's output stream
             out = new PrintWriter(echoSocket.getOutputStream(), true);
+             
             // socket's input stream
             in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+             
             
             Gson gson = new Gson();
             // send the message to the server
             out.println(gson.toJson(message));
+
              out.flush();
-           
-            txt = in.readLine();
-            // print echo
-            System.out.println("Client received echo: " + txt);
+
 
             // empty message -> close connection
             out.close();
@@ -73,12 +74,6 @@ public class EchoClient {
             System.err.println("Couldn't get I/O for the connection to: " + host);
             System.exit(1);
         }
-        System.out.println("Connection is established with the Server");
-
-        
-        
-
-        
-        
+        System.out.println("Connection is established with the Server");        
     }
 }
